@@ -1,0 +1,49 @@
+# do not create a queue: section for your test environment
+test:
+  adapter: postgresql
+  encoding: utf8
+  database: canvas_test
+  host: localhost
+  username: canvas
+  password: canvas
+  timeout: 5000
+
+test-in-memory:
+  adapter: sqlite3
+  encoding: utf8
+  database: ':memory:'
+  pool: 1
+
+development:
+  adapter: postgresql
+  encoding: utf8
+  database: canvas_development
+  host: localhost
+  username: canvas
+  password: canvas
+  timeout: 5000
+  queue:
+    adapter: postgresql
+    encoding: utf8
+    database: canvas_queue_development
+    host: localhost
+    username: canvas
+    password: canvas
+    timeout: 5000
+    
+production:
+  adapter: postgresql
+  encoding: utf8
+  database: canvas_production
+  host: localhost
+  username: canvas
+  password: your_password
+  timeout: 5000
+  queue:
+    adapter: postgresql
+    encoding: utf8
+    database: canvas_queue_production
+    host: localhost
+    username: canvas
+    password: your_password
+    timeout: 5000
