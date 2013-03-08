@@ -23,6 +23,7 @@ To build the virtual machine, first start with:
     host $ git clone https://github.com/jhuckabee/canvas-lms-dev-box.git
     host $ cd canvas-lms-dev-box
     host $ git submodule init
+    host $ git submodule update
     host $ git clone https://github.com/instructure/canvas-lms.git
     host $ vagrant up
 
