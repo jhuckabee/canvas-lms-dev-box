@@ -52,14 +52,16 @@ class install_core_packages {
 class { 'install_core_packages': }
 
 class install_ruby {
-  package { ['ruby', 'ruby-dev', 'zlib1g-dev', 'rake', 'rubygems', 'irb', 'libhttpclient-ruby']:
+  package { ['ruby1.9.1', 'ruby1.9.1-dev', 'zlib1g-dev', 'rake', 'rubygems1.9.1', 'irb', 'libhttpclient-ruby']:
     ensure => installed
   }
-
+  package { ['ruby1.8', 'ruby1.8-dev', 'rubygems1.8']: # Get rid of 1.8.7
+    ensure => "absent"
+  }
   exec { '/usr/bin/gem install bundler --no-rdoc --no-ri':
     unless  => '/usr/bin/gem list | grep bundler',
     user    => 'root',
-    require => Package['rubygems']
+    require => Package['rubygems1.9.1']
   }
 }
 class { 'install_ruby': }
@@ -111,7 +113,7 @@ class setup_canvas_db_config {
 class { 'setup_canvas_db_config': stage => canvas_setup }
 
 class setup_canvas_bundle {
-  notice{"Installing canvas gem dependencies... This can take a few minutes.":}
+  notify{"Installing canvas gem dependencies... This can take a few minutes.":}
   exec { 'bundle_install' :
     cwd     => '/vagrant/canvas-lms',
     command => 'bundle install --quiet --without sqlite mysql > /tmp/bundler.log',
