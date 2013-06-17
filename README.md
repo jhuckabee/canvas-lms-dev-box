@@ -34,7 +34,7 @@ Once this finishes you will have a fully configured development environment read
     vagrant $ cd /vagrant/canvas-lms
     vagrant $ bundle exec rake db:initial_setup
     vagrant $ bundle exec rake canvas:compile_assets
-    vagrant $ bundle exec script/server
+    vagrant $ bundle exec script/server -p 9999
 
 Once complete, canvas will be running on the virtual machine. You can access it from you browser locally at http://localhost:3000
 
