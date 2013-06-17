@@ -111,7 +111,7 @@ class setup_canvas_db_config {
 class { 'setup_canvas_db_config': stage => canvas_setup }
 
 class setup_canvas_bundle {
-  notice{"Installing canvas gem dependencies... This can take a few minutes.":}
+  notify{"Installing canvas gem dependencies... This can take a few minutes.":}
   exec { 'bundle_install' :
     cwd     => '/vagrant/canvas-lms',
     command => 'bundle install --quiet --without sqlite mysql > /tmp/bundler.log',
