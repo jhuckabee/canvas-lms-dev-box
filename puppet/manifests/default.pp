@@ -52,14 +52,26 @@ class install_core_packages {
 class { 'install_core_packages': }
 
 class install_ruby {
-  package { ['ruby', 'ruby-dev', 'zlib1g-dev', 'rake', 'rubygems', 'irb', 'libhttpclient-ruby']:
+  package {['ruby1.9.1', 'ruby1.9.1-dev', 'zlib1g-dev', 'rake', 'rubygems1.9.1', 'irb', 'libhttpclient-ruby']:
     ensure => installed
   }
 
-  exec { '/usr/bin/gem install bundler --no-rdoc --no-ri':
+  exec { '/usr/bin/update-alternatives --set ruby /usr/bin/ruby1.9.1':
+    user    => 'root',
+    require => Package['ruby1.9.1'],
+    before  => Exec['/usr/bin/gem install bundler -v 1.5.2 --no-rdoc --no-ri']
+  }
+
+  exec { '/usr/bin/update-alternatives --set gem /usr/bin/gem1.9.1':
+    user    => 'root',
+    require => Package['rubygems1.9.1'],
+    before  => Exec['/usr/bin/gem install bundler -v 1.5.2 --no-rdoc --no-ri']
+  }
+
+  exec { '/usr/bin/gem install bundler -v 1.5.2 --no-rdoc --no-ri':
     unless  => '/usr/bin/gem list | grep bundler',
     user    => 'root',
-    require => Package['rubygems']
+    require => Package['rubygems1.9.1']
   }
 }
 class { 'install_ruby': }
@@ -111,12 +123,14 @@ class setup_canvas_db_config {
 class { 'setup_canvas_db_config': stage => canvas_setup }
 
 class setup_canvas_bundle {
-  notice{"Installing canvas gem dependencies... This can take a few minutes.":}
+  notify{"Installing canvas gem dependencies... This can take a few minutes.":}
   exec { 'bundle_install' :
-    cwd     => '/vagrant/canvas-lms',
-    command => 'bundle install --quiet --without sqlite mysql > /tmp/bundler.log',
-    path    => ["/bin", "/usr/bin", "/usr/local/bin"],
-    timeout => 0
+    cwd       => '/vagrant/canvas-lms',
+    command   => 'bundle install --quiet --without sqlite mysql',
+    path      => ["/bin", "/usr/bin", "/usr/local/bin"],
+    timeout   => 0,
+    logoutput => true,
+    loglevel  => debug
   }
 }
 class { 'setup_canvas_bundle': stage => canvas_bundle }

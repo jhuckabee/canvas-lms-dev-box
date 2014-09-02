@@ -33,6 +33,7 @@ Once this finishes you will have a fully configured development environment read
     Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic-pae i686)
     ...
     vagrant $ cd /vagrant/canvas-lms
+    vagrant $ bundle install
     vagrant $ bundle exec rake db:initial_setup
     vagrant $ bundle exec rake canvas:compile_assets
     vagrant $ bundle exec script/server
