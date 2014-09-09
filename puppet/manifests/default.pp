@@ -126,7 +126,7 @@ class setup_canvas_bundle {
   notify{"Installing canvas gem dependencies... This can take a few minutes.":}
   exec { 'bundle_install' :
     cwd       => '/vagrant/canvas-lms',
-    command   => 'bundle install --quiet --without sqlite mysql',
+    command   => 'bundle install --without sqlite mysql',
     path      => ["/bin", "/usr/bin", "/usr/local/bin"],
     timeout   => 0,
     logoutput => true,
