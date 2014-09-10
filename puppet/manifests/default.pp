@@ -52,23 +52,23 @@ class install_core_packages {
 class { 'install_core_packages': }
 
 class install_ruby {
-  package {['ruby1.9.1', 'ruby1.9.1-dev', 'zlib1g-dev', 'rake', 'rubygems1.9.1', 'irb', 'libhttpclient-ruby']:
+  package {['ruby1.9.1', 'ruby1.9.1-dev', 'zlib1g-dev', 'rake', 'rubygems1.9.1', 'irb', 'libhttpclient-ruby',  'libsqlite3-dev','libhttpclient-ruby' ,'imagemagick','irb1.9.1','libxmlsec1-dev' , 'python-software-properties']:
     ensure => installed
   }
 
   exec { '/usr/bin/update-alternatives --set ruby /usr/bin/ruby1.9.1':
     user    => 'root',
     require => Package['ruby1.9.1'],
-    before  => Exec['/usr/bin/gem install bundler -v 1.5.2 --no-rdoc --no-ri']
+    before  => Exec['/usr/bin/gem install bundler -v 1.5.2']
   }
 
   exec { '/usr/bin/update-alternatives --set gem /usr/bin/gem1.9.1':
     user    => 'root',
     require => Package['rubygems1.9.1'],
-    before  => Exec['/usr/bin/gem install bundler -v 1.5.2 --no-rdoc --no-ri']
+    before  => Exec['/usr/bin/gem install bundler -v 1.5.2']
   }
 
-  exec { '/usr/bin/gem install bundler -v 1.5.2 --no-rdoc --no-ri':
+  exec { '/usr/bin/gem install bundler -v 1.5.2':
     unless  => '/usr/bin/gem list | grep bundler',
     user    => 'root',
     require => Package['rubygems1.9.1']
@@ -126,7 +126,7 @@ class setup_canvas_bundle {
   notify{"Installing canvas gem dependencies... This can take a few minutes.":}
   exec { 'bundle_install' :
     cwd       => '/vagrant/canvas-lms',
-    command   => 'bundle install --without sqlite mysql',
+    command   => 'bundle install --without mysql',
     path      => ["/bin", "/usr/bin", "/usr/local/bin"],
     timeout   => 0,
     logoutput => true,

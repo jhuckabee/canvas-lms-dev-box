@@ -36,7 +36,7 @@ Once this finishes you will have a fully configured development environment read
     vagrant $ bundle install
     vagrant $ bundle exec rake db:initial_setup
     vagrant $ bundle exec rake canvas:compile_assets
-    vagrant $ bundle exec script/server
+    vagrant $ bundle exec rails server
 
 Once complete, canvas will be running on the virtual machine. You can access it from you browser locally at http://localhost:3000
 
