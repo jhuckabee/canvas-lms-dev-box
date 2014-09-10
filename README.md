@@ -84,3 +84,7 @@ Please see the [Vagrant Documentation](http://vagrantup.com/v1/docs/index.html) 
 # Special thanks
 
 This development environment was based on the [rails-dev-box](https://github.com/rails/rails-dev-box) project.
+
+# Refrences
+Detailed instructions for installation and configuration of Canvas
+[Quick Start](https://github.com/instructure/canvas-lms/wiki/Quick-Start)
