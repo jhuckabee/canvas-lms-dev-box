@@ -52,7 +52,7 @@ class install_core_packages {
 class { 'install_core_packages': }
 
 class install_ruby {
-  package {['ruby1.9.1', 'ruby1.9.1-dev', 'zlib1g-dev', 'rake', 'rubygems1.9.1', 'irb', 'libhttpclient-ruby',  'libsqlite3-dev','imagemagick','irb1.9.1','libxmlsec1-dev' , 'python-software-properties']:
+  package {['ruby1.9.1', 'ruby1.9.1-dev', 'zlib1g-dev', 'rake', 'rubygems1.9.1', 'irb', 'libhttpclient-ruby',  'libsqlite3-dev','imagemagick','irb1.9.1' , 'python-software-properties']:
     ensure => installed
   }
 
