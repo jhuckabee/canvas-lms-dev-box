@@ -34,13 +34,6 @@ Once this finishes you will have a fully configured development environment read
     ...
     vagrant $ cd /vagrant/canvas-lms
     vagrant $ bundle install --without mysql
-    vagrant $ sudo apt-get purge npm nodejs
-    vagrant $ sudo apt-get remove npm nodejs
-    vagrant $ sudo add-apt-repository ppa:chris-lea/node.js
-    vagrant $ sudo apt-get update
-    vagrant $ sudo apt-get install nodejs 
-    vagrant $ npm install    
-    vagrant $ bundle install --without mysql
     vagrant $ bundle exec rake db:initial_setup
     vagrant $ bundle exec rake canvas:compile_assets
     vagrant $ bundle exec rails server

@@ -99,8 +99,11 @@ class install_curl_dependencies {
 class { 'install_curl_dependencies': }
 
 class install_js_dependencies {
+  include apt
+  apt::ppa{'ppa:chris-lea/node.js':}
   package { ['nodejs', 'coffeescript']:
-    ensure => installed
+    ensure => installed,
+    require => Apt::Ppa['ppa:chris-lea/node.js']
   }
 }
 class { 'install_js_dependencies': }
@@ -131,6 +134,13 @@ class setup_canvas_bundle {
     timeout   => 0,
     logoutput => true,
     loglevel  => debug
+  }
+
+  exec{'npm install':
+    cwd     => '/vagrant/canvas-lms',
+    command => 'npm install',
+    path    => ["/bin", "/usr/bin", "/usr/local/bin"],
+    timeout => 0
   }
 }
 class { 'setup_canvas_bundle': stage => canvas_bundle }
