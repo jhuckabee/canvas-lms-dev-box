@@ -1,3 +1,4 @@
+
 $canvas_databases = ['canvas_development', 'canvas_queue_development', 'canvas_test']
 
 # Make sure apt-get -y update runs before anything else.
@@ -132,8 +133,6 @@ class setup_canvas_bundle {
     command   => 'bundle install --without mysql',
     path      => ["/bin", "/usr/bin", "/usr/local/bin"],
     timeout   => 0,
-    logoutput => true,
-    loglevel  => debug
   }
 
   exec{'npm install':
@@ -141,6 +140,34 @@ class setup_canvas_bundle {
     command => 'npm install',
     path    => ["/bin", "/usr/bin", "/usr/local/bin"],
     timeout => 0
+  }
+
+  exec{'initializing DB':
+    cwd         => '/vagrant/canvas-lms',
+    command     => 'bundle exec rake db:initial_setup',
+    path        => ["/bin", "/usr/bin", "/usr/local/bin"],
+    environment => ['CANVAS_LMS_ADMIN_EMAIL=admin@example.com', 'CANVAS_LMS_ADMIN_PASSWORD=t3stP@ssw0rd', 'CANVAS_LMS_STATS_COLLECTION=1', 'CANVAS_LMS_ACCOUNT_NAME=Test'],
+    timeout     => 0,
+    require     => Exec['bundle_install']
+  }
+
+  exec{'compile assets':
+    cwd     => '/vagrant/canvas-lms',
+    command => 'bundle exec rake canvas:compile_assets',
+    path    => ["/bin", "/usr/bin", "/usr/local/bin"],
+    timeout => 0,
+    require => [Exec['bundle_install'], Exec['initializing DB']]
+  }
+  
+  notify{"Login Credentials : email => admin@example.com , Password => t3stP@ssw0rd":
+  }
+
+  exec{'start server':
+    cwd     => '/vagrant/canvas-lms',
+    command => 'bundle exec rails server -d',
+    path    => ["/bin", "/usr/bin", "/usr/local/bin"],
+    timeout => 0,
+    require => Exec['compile assets']
   }
 }
 class { 'setup_canvas_bundle': stage => canvas_bundle }
