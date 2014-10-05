@@ -1,5 +1,27 @@
 
-$canvas_databases = ['canvas_development', 'canvas_queue_development', 'canvas_test']
+$canvas_databases = ['canvas_development',
+                    'canvas_queue_development',
+                    'canvas_test'
+                    ]
+
+$ruby_packages = ['ruby1.9.1',
+                  'ruby1.9.1-dev',
+                  'zlib1g-dev',
+                  'rake',
+                  'rubygems1.9.1',
+                  'irb',
+                  'libhttpclient-ruby',
+                  'libsqlite3-dev',
+                  'imagemagick',
+                  'irb1.9.1' ,
+                  'python-software-properties'
+                  ]
+
+$canvas_env_vars = ['CANVAS_LMS_ADMIN_EMAIL=admin@example.com',
+                    'CANVAS_LMS_ADMIN_PASSWORD=t3stP@ssw0rd',
+                    'CANVAS_LMS_STATS_COLLECTION=1',
+                    'CANVAS_LMS_ACCOUNT_NAME=Test'
+                    ]
 
 # Make sure apt-get -y update runs before anything else.
 stage { 'preinstall': before => Stage['main'] }
@@ -32,7 +54,7 @@ class install_postgres {
     require  => Class['postgresql::server']
   }
 
-  pg_database { $canvas_databases:
+  pg_database { $::canvas_databases:
     ensure   => present,
     owner    => 'canvas',
     encoding => 'UTF8',
@@ -53,7 +75,7 @@ class install_core_packages {
 class { 'install_core_packages': }
 
 class install_ruby {
-  package {['ruby1.9.1', 'ruby1.9.1-dev', 'zlib1g-dev', 'rake', 'rubygems1.9.1', 'irb', 'libhttpclient-ruby',  'libsqlite3-dev','imagemagick','irb1.9.1' , 'python-software-properties']:
+  package {$::ruby_packages:
     ensure => installed
   }
 
@@ -103,7 +125,7 @@ class install_js_dependencies {
   include apt
   apt::ppa{'ppa:chris-lea/node.js':}
   package { ['nodejs', 'coffeescript']:
-    ensure => installed,
+    ensure  => installed,
     require => Apt::Ppa['ppa:chris-lea/node.js']
   }
 }
@@ -113,7 +135,7 @@ class setup_canvas_configs {
   exec { 'copy_configs' :
     cwd     => '/vagrant/canvas-lms',
     command => '/bin/bash -c "for config in amazon_s3 delayed_jobs domain file_store outgoing_mail security scribd external_migration; do cp config/\$config.yml.example config/\$config.yml; done"',
-    path    => "/bin"
+    path    => '/bin'
   }
 }
 class { 'setup_canvas_configs': stage => canvas_setup }
@@ -127,26 +149,26 @@ class setup_canvas_db_config {
 class { 'setup_canvas_db_config': stage => canvas_setup }
 
 class setup_canvas_bundle {
-  notify{"Installing canvas gem dependencies... This can take a few minutes.":}
+  notify{'Installing canvas gem dependencies... This can take a few minutes.':}
   exec { 'bundle_install' :
-    cwd       => '/vagrant/canvas-lms',
-    command   => 'bundle install --without mysql',
-    path      => ["/bin", "/usr/bin", "/usr/local/bin"],
-    timeout   => 0,
+    cwd     => '/vagrant/canvas-lms',
+    command => 'bundle install --without mysql',
+    path    => ['/bin', '/usr/bin', '/usr/local/bin'],
+    timeout => 0,
   }
 
   exec{'npm install':
     cwd     => '/vagrant/canvas-lms',
     command => 'npm install',
-    path    => ["/bin", "/usr/bin", "/usr/local/bin"],
+    path    => ['/bin', '/usr/bin', '/usr/local/bin'],
     timeout => 0
   }
 
   exec{'initializing DB':
     cwd         => '/vagrant/canvas-lms',
     command     => 'bundle exec rake db:initial_setup',
-    path        => ["/bin", "/usr/bin", "/usr/local/bin"],
-    environment => ['CANVAS_LMS_ADMIN_EMAIL=admin@example.com', 'CANVAS_LMS_ADMIN_PASSWORD=t3stP@ssw0rd', 'CANVAS_LMS_STATS_COLLECTION=1', 'CANVAS_LMS_ACCOUNT_NAME=Test'],
+    path        => ['/bin', '/usr/bin', '/usr/local/bin'],
+    environment => $::canvas_env_vars,
     timeout     => 0,
     require     => Exec['bundle_install']
   }
@@ -154,18 +176,18 @@ class setup_canvas_bundle {
   exec{'compile assets':
     cwd     => '/vagrant/canvas-lms',
     command => 'bundle exec rake canvas:compile_assets',
-    path    => ["/bin", "/usr/bin", "/usr/local/bin"],
+    path    => ['/bin', '/usr/bin', '/usr/local/bin'],
     timeout => 0,
     require => [Exec['bundle_install'], Exec['initializing DB']]
   }
   
-  notify{"Login Credentials : email => admin@example.com , Password => t3stP@ssw0rd":
+  notify{"Login Creds : email => $::canvas_env_vars["CANVAS_LMS_ADMIN_PASSWORD"] , Password => $::canvas_env_vars["CANVAS_LMS_ADMIN_PASSWORD"]":
   }
 
   exec{'start server':
     cwd     => '/vagrant/canvas-lms',
     command => 'bundle exec rails server -d',
-    path    => ["/bin", "/usr/bin", "/usr/local/bin"],
+    path    => ['/bin', '/usr/bin', '/usr/local/bin'],
     timeout => 0,
     require => Exec['compile assets']
   }
