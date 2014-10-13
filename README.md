@@ -27,18 +27,9 @@ To build the virtual machine, first start with:
     host $ git clone https://github.com/instructure/canvas-lms.git
     host $ vagrant up
 
-Once this finishes you will have a fully configured development environment ready to go. To get the development server running, continue with the following:
+Once this finishes you will have a fully configured development environment ready and the development server is running. 
 
-    host $ vagrant ssh
-    Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic-pae i686)
-    ...
-    vagrant $ cd /vagrant/canvas-lms
-    vagrant $ bundle install --without mysql
-    vagrant $ bundle exec rake db:initial_setup
-    vagrant $ bundle exec rake canvas:compile_assets
-    vagrant $ bundle exec rails server
-
-Once complete, canvas will be running on the virtual machine. You can access it from you browser locally at http://localhost:3000
+You can access it from you browser locally at http://localhost:3000
 
 ## Things to note
 
