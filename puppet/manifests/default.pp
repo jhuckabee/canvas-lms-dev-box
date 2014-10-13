@@ -18,7 +18,7 @@ $ruby_packages = ['ruby1.9.1',
                   ]
 
 $canvas_env_vars = ['CANVAS_LMS_ADMIN_EMAIL=admin@example.com',
-                    'CANVAS_LMS_ADMIN_PASSWORD=t3stP@ssw0rd',
+                    'CANVAS_LMS_ADMIN_PASSWORD=password',
                     'CANVAS_LMS_STATS_COLLECTION=1',
                     'CANVAS_LMS_ACCOUNT_NAME=Test'
                     ]
