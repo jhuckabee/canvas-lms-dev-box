@@ -20,7 +20,7 @@ build.
 
 To build the virtual machine, first start with:
 
-    host $ git clone https://github.com/jhuckabee/canvas-lms-dev-box.git
+    host $ git clone https://github.com/HatemAlSum/canvas-lms-dev-box.git
     host $ cd canvas-lms-dev-box
     host $ git submodule init
     host $ git submodule update
