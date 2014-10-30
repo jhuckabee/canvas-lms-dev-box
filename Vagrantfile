@@ -17,5 +17,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :puppet,
     :manifests_path => 'puppet/manifests',
     :module_path    => 'puppet/modules',
-    :options        => [ "--pluginsync --verbose --summarize" ]
+    :options        => [ "--pluginsync" ]
 end

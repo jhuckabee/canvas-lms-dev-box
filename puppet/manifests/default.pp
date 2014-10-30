@@ -170,7 +170,6 @@ class setup_canvas_bundle {
     environment => ["CANVAS_LMS_ADMIN_EMAIL=$::canvas_lms_admin_email", "CANVAS_LMS_ADMIN_PASSWORD=$::canvas_lms_admin_password", "CANVAS_LMS_STATS_COLLECTION=$::canvas_lms_stats_collection", "CANVAS_LMS_ACCOUNT_NAME=$::canvas_lms_account_name"],
     timeout     => 0,
     require     => Exec['bundle_install'],
-    logoutput   => true,
   }
 
   exec{'compile assets':
