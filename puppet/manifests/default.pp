@@ -17,11 +17,10 @@ $ruby_packages = ['ruby1.9.1',
                   'python-software-properties'
                   ]
 
-$canvas_env_vars = ['CANVAS_LMS_ADMIN_EMAIL=admin@example.com',
-                    'CANVAS_LMS_ADMIN_PASSWORD=password',
-                    'CANVAS_LMS_STATS_COLLECTION=1',
-                    'CANVAS_LMS_ACCOUNT_NAME=Test'
-                    ]
+$canvas_lms_admin_email = 'admin@example.com'
+$canvas_lms_admin_password = 'password'
+$canvas_lms_stats_collection = '1'
+$canvas_lms_account_name = 'Test'
 
 # Make sure apt-get -y update runs before anything else.
 stage { 'preinstall': before => Stage['main'] }
@@ -82,16 +81,16 @@ class install_ruby {
   exec { '/usr/bin/update-alternatives --set ruby /usr/bin/ruby1.9.1':
     user    => 'root',
     require => Package['ruby1.9.1'],
-    before  => Exec['/usr/bin/gem install bundler -v 1.5.2']
+    before  => Exec['/usr/bin/gem install bundler -v 1.7.2']
   }
 
   exec { '/usr/bin/update-alternatives --set gem /usr/bin/gem1.9.1':
     user    => 'root',
     require => Package['rubygems1.9.1'],
-    before  => Exec['/usr/bin/gem install bundler -v 1.5.2']
+    before  => Exec['/usr/bin/gem install bundler -v 1.7.2']
   }
 
-  exec { '/usr/bin/gem install bundler -v 1.5.2':
+  exec { '/usr/bin/gem install bundler -v 1.7.2':
     unless  => '/usr/bin/gem list | grep bundler',
     user    => 'root',
     require => Package['rubygems1.9.1']
@@ -168,9 +167,10 @@ class setup_canvas_bundle {
     cwd         => '/vagrant/canvas-lms',
     command     => 'bundle exec rake db:initial_setup',
     path        => ['/bin', '/usr/bin', '/usr/local/bin'],
-    environment => $::canvas_env_vars,
+    environment => ["CANVAS_LMS_ADMIN_EMAIL=$::canvas_lms_admin_email", "CANVAS_LMS_ADMIN_PASSWORD=$::canvas_lms_admin_password", "CANVAS_LMS_STATS_COLLECTION=$::canvas_lms_stats_collection", "CANVAS_LMS_ACCOUNT_NAME=$::canvas_lms_account_name"],
     timeout     => 0,
-    require     => Exec['bundle_install']
+    require     => Exec['bundle_install'],
+    logoutput   => true,
   }
 
   exec{'compile assets':
@@ -181,7 +181,7 @@ class setup_canvas_bundle {
     require => [Exec['bundle_install'], Exec['initializing DB']]
   }
   
-  notify{"Login Creds : email => $::canvas_env_vars["CANVAS_LMS_ADMIN_PASSWORD"] , Password => $::canvas_env_vars["CANVAS_LMS_ADMIN_PASSWORD"]":
+  notify{"Login Creds : email => $::canvas_lms_admin_email , Password => $::canvas_lms_admin_password":
   }
 
   exec{'start server':
